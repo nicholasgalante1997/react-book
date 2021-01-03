@@ -16,18 +16,35 @@
     // Practice #1
     // Create a variable called pEl
     // Use JSX to create a paragraph element with text "Hello React."
-    const pEl = "";
+      const pEl = <p>Hello React</p>;
 
     // Practice #2
     // Create a variable called h1LinkEl
     // Use JSX to create an h1 element tag with a link inside of it
     // Make the link point to https://reactjs.org/ and include the text "React"
-
+      const h1LinkEl = () => {
+        return (
+          <h1>
+            <a href="https://reactjs.org/">
+              React
+            </a>
+          </h1>
+        )
+      }
 
     // Practice #3
     // Create a component named "Header"
     // Have it return a header with an ID of "main" 
     // Include h1LinkEl and pEl inside of the header element
+
+      const Header = () => {
+        return (
+          <header id="main">
+            {pEl}
+            {h1LinkEl}
+          </header>
+        )
+      }
 
     
     // Practice #4
@@ -39,17 +56,45 @@
     // The third should be a link to a React related resource of your choice
     // Make sure to include a key for each list item
 
+      const List = () => {
+        return (
+          <ul className="react-links" id="top">
+            <li>
+              <a href="https://reactjs.org/docs">
+                React Docs
+              </a>
+            </li>
+            <li>
+              <a href="https://reactjs.org/docs">
+                React Docs
+              </a>
+            </li>
+            <li key="linkReactBook">
+              <a href="https://reactexplained.com">React Explained Book</a>
+            </li>
+          </ul>
+        )
+      }
     
     // Practice #5
     // Create a component named "App"
     // Have it return a Fragment with the Header and List components inside of it
     // NOTE: The <> shorthand will not work with this demo, use <React.Fragment> for now
 
+      const App = () => {
+        return (
+          <React.Fragment>
+            <Header />
+            <List />
+          </React.Fragment>
+        )
+      }
+
       
 
     ReactDOM.render(
       // Place your element or component here to test
-      pEl,
+      <App />,
       document.getElementById('root')
     );
 
