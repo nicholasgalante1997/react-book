@@ -15,6 +15,14 @@ class Practice4 extends React.Component {
     5. If that passes, then log out "State Changed!"
   */
 
+  componentDidUpdate(prevProps, prevState){
+    console.log(prevState.points, "Previous")
+    console.log(this.state.points, "Current")
+    if (prevState.points !== this.state.points){
+      console.log("State's Changed!")
+    }
+  }
+
   addPoint = () => {
     this.setState({ points: this.state.points + 1 });
   };

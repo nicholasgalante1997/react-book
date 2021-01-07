@@ -28,7 +28,7 @@ class Practice5 extends React.Component {
     return (
       <div>
         {this.state.points < this.state.goal ? (
-          <BarChart points={this.state.points} />
+          <BarChart points={this.state.points} stopTimer={this.stopTimer}/>
         ) : (
           <h1 style={{ color: "green" }}>GOAL!!!</h1>
         )}
@@ -52,6 +52,11 @@ class BarChart extends React.Component {
     7. Inside of componentWillUnmount() log out that the <BarChart /> Component is unmounting
     8. The call this.props.stopTimer(); to stop the timer from running
   */
+
+  componentWillUnmount(){
+    console.log("The BarChart Component is unmounting")
+    this.props.stopTimer();
+  }
 
   render() {
     const barStyles = {
