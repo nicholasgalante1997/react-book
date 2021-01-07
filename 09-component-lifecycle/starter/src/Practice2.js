@@ -1,5 +1,7 @@
 import React from "react";
 
+const axios = require('axios');
+
 class Practice2 extends React.Component {
   state = {
     posts: [
@@ -11,6 +13,16 @@ class Practice2 extends React.Component {
       }
     ]
   };
+
+  componentDidMount() {
+    axios.get("https://dev-react-explained-api.pantheonsite.io/wp-json/wp/v2/posts")
+    .then(resp => {
+      this.setState({
+        posts: resp.data
+      })
+    })
+    .catch(err => console.log(err))
+  }
   /* 
     1. Add the method componentDidMount()
     2. Call fetch("https://dev-react-explained-api.pantheonsite.io/wp-json/wp/v2/posts")
