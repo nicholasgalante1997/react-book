@@ -12,6 +12,10 @@ class Practice2 extends React.Component {
         from the form (e.target.value)
   */
 
+  handleUsername = (e) => {
+    this.setState({username: e.target.value})
+  }
+
   render() {
     return (
       <>
@@ -21,7 +25,12 @@ class Practice2 extends React.Component {
             4. onChange should call this.handleUsername
             5. Set placeholder to the username in state
           */}
-          <input onChange="" type="text" placeholder="" />
+          <input 
+          onChange={(e) => handleUsername(e)} 
+          type="text" 
+          placeholder={this.state.username} 
+          />
+          
         </p>
       </>
     );
