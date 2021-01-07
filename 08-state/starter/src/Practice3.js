@@ -49,12 +49,12 @@ class Practice3 extends React.Component {
         <UserForm 
         id="firstName" 
         label="First Name" 
-        onChange={handleFirst} 
+        onChange={this.handleFirst} 
         />
         <UserForm 
         id="lastName" 
         label="Last Name" 
-        onChange={handleLast} 
+        onChange={this.handleLast} 
         />
       </>
     );
