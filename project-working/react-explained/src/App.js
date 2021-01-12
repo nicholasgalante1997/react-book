@@ -15,6 +15,7 @@ import Header from './components/Header'
 import Posts from './components/Posts'
 import Post from './components/Post'
 import PostForm from './components/PostForm'
+import Message from './components/Message'
 import NotFound from './components/NotFound'
 
 const POSTS = [
@@ -41,19 +42,42 @@ const POSTS = [
 function App(props) {
 
   const [posts, setPosts] = useState(POSTS)
+  const [message, setMessage] = useState(null)
+
+  const setFlashMessage = (message) => {
+    setMessage(message)
+    setTimeout(() => {
+      setMessage(null);
+    }, 1600)
+  }
+
+  const getNewSlugFromTitle = (title) => {
+   return encodeURIComponent(
+      title.toLowerCase().split(" ").join("-")
+    )
+  }
+
+  const updatePost = (post) => {
+    post.slug = getNewSlugFromTitle(post.title)
+    const index = posts.findIndex(p => p.id === post.id)
+    const oldPosts = posts.slice(0, index).concat(posts.slice(index + 1))
+    const updatedPosts = [...oldPosts, post].sort((a, b) => a.id - b.id )
+    setPosts(updatedPosts)
+    setFlashMessage('updated')
+  }
 
   const addNewPost = (post) => {
     post.id = posts.length + 1
-    post.slug = encodeURIComponent(
-      post.title.toLowerCase().split(" ").join("-")
-    )
+    post.slug = getNewSlugFromTitle(post.title)
     setPosts([...posts, post])
+    setFlashMessage('saved')
   }
 
   return (
     <Router>
       <div className="App">
       <Header />
+      {message && <Message type={message} /> }
       <Switch>
         <Route 
           exact path="/"
@@ -74,6 +98,17 @@ function App(props) {
           exact path="/new"
           render={() => {
             return <PostForm addNewPost={addNewPost} />
+          }}
+        />
+        <Route  
+          path="/edit/:postSlug"
+          render={(props) => {
+            const post = posts.find(post => post.slug === props.match.params.postSlug)
+            if (post) {
+              return <PostForm post={post} updatePost={updatePost} />
+            } else {
+              return <Redirect to="/" />
+            }
           }}
         />
         <Route 
