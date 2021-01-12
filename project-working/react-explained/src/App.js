@@ -97,7 +97,10 @@ function App(props) {
         <Route 
           exact path="/new"
           render={() => {
-            return <PostForm addNewPost={addNewPost} />
+            return <PostForm 
+              addNewPost={addNewPost} 
+              post={{id: 0, slug: "", title: "", content: ""}}
+            />
           }}
         />
         <Route  
