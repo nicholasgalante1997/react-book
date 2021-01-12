@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom'
 
-const Posts = ({ posts }) => {
+const Posts = ({ posts, deletePost }) => {
     return ( 
         <article className="postsContainer">
             <h1>
@@ -26,7 +26,18 @@ const Posts = ({ posts }) => {
                                     <Link to={`/edit/${post.slug}`}>
                                         Edit
                                     </Link>
+
+                                    {" | "}
+                                    
+                                    <button 
+                                        className="linkLike"
+                                        onClick={() => deletePost(post)}
+                                    >
+                                        Delete
+                                    </button>
                                 </p>
+            
+                                
                             </li>
                         )
                     })

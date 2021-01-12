@@ -10,6 +10,9 @@ import {
   Redirect
 } from 'react-router-dom'
 
+// Local Storage
+import {useStorageState} from 'react-storage-hooks'
+
 // My Components
 import Header from './components/Header'
 import Posts from './components/Posts'
@@ -41,7 +44,7 @@ const POSTS = [
 
 function App(props) {
 
-  const [posts, setPosts] = useState(POSTS)
+  const [posts, setPosts] = useStorageState(localStorage, 'state-posts', [])
   const [message, setMessage] = useState(null)
 
   const setFlashMessage = (message) => {
@@ -73,6 +76,14 @@ function App(props) {
     setFlashMessage('saved')
   }
 
+  const deletePost = post => {
+    if (window.confirm("Delete this post?")) {
+      const updatedPosts = posts.filter(p => p.id !== post.id)
+      setPosts(updatedPosts)
+      setFlashMessage('deleted')
+    }
+  }
+
   return (
     <Router>
       <div className="App">
@@ -81,7 +92,7 @@ function App(props) {
       <Switch>
         <Route 
           exact path="/"
-          render={ () => <Posts posts={posts} /> }
+          render={ () => <Posts posts={posts} deletePost={deletePost} /> }
         /> 
         <Route 
           path="/posts/:postSlug"
