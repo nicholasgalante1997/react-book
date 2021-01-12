@@ -11,16 +11,28 @@ const Practice4 = () => {
   const [catImg, setCatImg] = useState(``);
 
   useEffect(() => {
-    fetch(`https://aws.random.cat/meow`)
-      .then(response => response.json())
-      .then(data => setCatImg(data.file))
-      .catch(error => console.error(error));
+    fetchCat()
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchCat();
+    }, 5000);
+    return () => clearTimeout(timer);
+  });
+
+  const fetchCat = () => {
+    fetch(`https://aws.random.cat/meow`)
+    .then(response => response.json())
+    .then(data => setCatImg(data.file))
+    .catch(error => console.error(error));
+  }
 
   return (
     <>
       <h1>Random Cat Photo</h1>
       <img src={catImg} alt="Random Cat Image" width="500" />
+      <p>Photo refreshes every five seconds</p>
     </>
   );
 };

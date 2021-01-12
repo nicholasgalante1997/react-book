@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 
 const Practice3 = () => {
   /*
@@ -8,10 +8,21 @@ const Practice3 = () => {
    * 4. Pass an empty array of dependencies to useEffect so it only fetches on initial page load
    */
 
+   const [catImg, setCatImg] = useState("")
+
+   const ENDPOINT = "https://aws.random.cat/meow"
+
+  useEffect(() => {
+    fetch(ENDPOINT)
+    .then(r => r.json())
+    .then(data => setCatImg(data.file))
+    .catch(error => console.log(error))
+  }, [])
+
   return (
     <>
       <h1>Random Cat Photo</h1>
-      <img src="" alt="Random Cat Image" width="500" />
+      <img src={catImg} alt="Random Cat Image" width="500" />
     </>
   );
 };
