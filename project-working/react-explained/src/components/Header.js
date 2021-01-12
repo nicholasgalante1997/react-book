@@ -10,6 +10,11 @@ const Header = (props) => {
                         React Explained!
                     </Link>
                 </li>
+                <li>
+                    <Link to="/new">
+                        New Post 
+                    </Link>
+                </li>
             </ul>
         </header>
      );

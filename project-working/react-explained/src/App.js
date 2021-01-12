@@ -14,6 +14,7 @@ import {
 import Header from './components/Header'
 import Posts from './components/Posts'
 import Post from './components/Post'
+import PostForm from './components/PostForm'
 import NotFound from './components/NotFound'
 
 const POSTS = [
@@ -40,6 +41,15 @@ const POSTS = [
 function App(props) {
 
   const [posts, setPosts] = useState(POSTS)
+
+  const addNewPost = (post) => {
+    post.id = posts.length + 1
+    post.slug = encodeURIComponent(
+      post.title.toLowerCase().split(" ").join("-")
+    )
+    setPosts([...posts, post])
+  }
+
   return (
     <Router>
       <div className="App">
@@ -58,6 +68,12 @@ function App(props) {
             } else {
               return <NotFound />
             }
+          }}
+        />
+        <Route 
+          exact path="/new"
+          render={() => {
+            return <PostForm addNewPost={addNewPost} />
           }}
         />
         <Route 
