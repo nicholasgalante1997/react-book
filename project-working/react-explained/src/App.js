@@ -14,6 +14,7 @@ import {
 import Header from './components/Header'
 import Posts from './components/Posts'
 import Post from './components/Post'
+import NotFound from './components/NotFound'
 
 const POSTS = [
   {
@@ -51,9 +52,16 @@ function App(props) {
         <Route 
           path="/posts/:postSlug"
           render={(props) => {
-            const post = posts.find(post => post.slug === props.match.params.postSlug)
-            return <Post post={post} />
+            const post = posts.find(post => post.slug === props.match.params.postSlug);
+            if (post) {
+              return <Post post={post} />
+            } else {
+              return <NotFound />
+            }
           }}
+        />
+        <Route 
+          component={NotFound}
         />
       </Switch>
       </div>
