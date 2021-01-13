@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 // Auth
 import firebase from './firebase'
@@ -31,6 +31,23 @@ function App(props) {
   const [posts, setPosts] = useStorageState(localStorage, 'state-posts', [])
   const [user, setUser] = useStorageState(localStorage, 'state-user', {})
   const [message, setMessage] = useState(null)
+
+  useEffect(() => {
+    const postsRef = firebase.database().ref('posts')
+    postsRef.on("value", (snapshot) => {
+      const posts = snapshot.val();
+      const newStatePosts = []
+      for (let post in posts) {
+        newStatePosts.push({
+          key: post,
+          slug: posts[post].slug,
+          title: posts[post].title,
+          content: posts[post].content
+        })
+      }
+      setPosts(newStatePosts)
+    })
+  }, [setPosts])
 
   const onLogin = (email, password) => {
     firebase.auth()
@@ -63,25 +80,27 @@ function App(props) {
   }
 
   const updatePost = (post) => {
-    post.slug = getNewSlugFromTitle(post.title)
-    const index = posts.findIndex(p => p.id === post.id)
-    const oldPosts = posts.slice(0, index).concat(posts.slice(index + 1))
-    const updatedPosts = [...oldPosts, post].sort((a, b) => a.id - b.id )
-    setPosts(updatedPosts)
+    const postRef = firebase.database().ref("posts/" + post.key)
+    postRef.update({
+      slug: getNewSlugFromTitle(post.title),
+      title: post.title,
+      content: post.content
+    })
     setFlashMessage('updated')
   }
 
   const addNewPost = (post) => {
-    post.id = posts.length + 1
-    post.slug = getNewSlugFromTitle(post.title)
-    setPosts([...posts, post])
-    setFlashMessage('saved')
+   const postsRef = firebase.database().ref('posts')
+   post.slug = getNewSlugFromTitle(post.title)
+   delete post.key 
+   postsRef.push(post)
+   setFlashMessage('saved')
   }
 
   const deletePost = post => {
     if (window.confirm("Delete this post?")) {
-      const updatedPosts = posts.filter(p => p.id !== post.id)
-      setPosts(updatedPosts)
+      const postRef = firebase.database().ref('posts/' + post.key)
+      postRef.remove()
       setFlashMessage('deleted')
     }
   }
@@ -119,7 +138,7 @@ function App(props) {
           render={() => {
             return user.isAuthenticated ? <PostForm 
               addNewPost={addNewPost} 
-              post={{id: 0, slug: "", title: "", content: ""}}
+              post={{key: null, slug: "", title: "", content: ""}}
             /> : 
             <Redirect to="/login" />
           }}

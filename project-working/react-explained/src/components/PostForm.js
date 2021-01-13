@@ -10,7 +10,7 @@ const PostForm = (props) => {
     const [post, setPost] = useState({...propsPost})
     const [saved, setSaved] = useState(false)
 
-    
+
     const prevPostRef = useRef();
 
     useEffect(() => {
@@ -23,7 +23,7 @@ const PostForm = (props) => {
 
     useEffect(() => {
         if (prevPost && quillRef.current){
-            if (propsPost.id !== prevPost.id ) {
+            if (propsPost.key !== prevPost.key ) {
                 setPost({...propsPost})
                 quillRef.current.getEditor().setContents(``)
             }
