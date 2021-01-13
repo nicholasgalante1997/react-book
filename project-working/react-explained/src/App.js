@@ -25,6 +25,7 @@ import PostForm from './components/PostForm'
 import Message from './components/Message'
 import NotFound from './components/NotFound'
 import Login from './components/Login'
+import Register from './components/Register'
 
 function App(props) {
 
@@ -48,6 +49,16 @@ function App(props) {
       setPosts(newStatePosts)
     })
   }, [setPosts])
+
+  const onRegister = (email, password) => {
+    firebase.auth()
+    .createUserWithEmailAndPassword(email, password)
+    .then(response => setUser({
+      email: response.user['email'],
+      isAuthenticated: true
+    }))
+    .catch(error => console.log(error))
+  }
 
   const onLogin = (email, password) => {
     firebase.auth()
@@ -107,7 +118,7 @@ function App(props) {
 
   return (
     <Router>
-      <UserContext.Provider value={{ user, onLogin, onLogout }}>
+      <UserContext.Provider value={{ user, onLogin, onLogout, onRegister }}>
       <div className="App">
       <Header />
       {message && <Message type={message} /> }
@@ -122,6 +133,12 @@ function App(props) {
           return !user.isAuthenticated ? <Login /> : <Redirect to="/" />
         }}
         />
+        <Route 
+          exact path="/register"
+          render={() => {
+            return !user.isAuthenticated ? <Register /> : <Redirect to="/" />
+          }}
+          />
         <Route 
           path="/posts/:postSlug"
           render={(props) => {
