@@ -2,6 +2,10 @@ import logo from './logo.svg';
 import './App.css';
 import React, {useState} from 'react';
 
+// Auth
+import firebase from './firebase'
+import UserContext from './context/UserContext'
+
 // React Router
 import { 
   BrowserRouter as Router, 
@@ -20,32 +24,30 @@ import Post from './components/Post'
 import PostForm from './components/PostForm'
 import Message from './components/Message'
 import NotFound from './components/NotFound'
-
-const POSTS = [
-  {
-    id: 1,
-    title: "Hello React",
-    content: "Lorem ipsum",
-    slug: 'hello-react'
-  },
-  {
-    id: 2,
-    title: "Hello World",
-    content: "Lorem ipsum",
-    slug: 'hello-world'
-  },
-  {
-    id: 3,
-    title: "Hello Javascript",
-    content: "Lorem ipsum",
-    slug: 'hello-js'
-  }
-]
+import Login from './components/Login'
 
 function App(props) {
 
   const [posts, setPosts] = useStorageState(localStorage, 'state-posts', [])
+  const [user, setUser] = useStorageState(localStorage, 'state-user', {})
   const [message, setMessage] = useState(null)
+
+  const onLogin = (email, password) => {
+    firebase.auth()
+    .signInWithEmailAndPassword(email, password)
+    .then(response => setUser({
+      email: response.user['email'],
+      isAuthenticated: true
+    }))
+    .catch(err => console.log(err))
+  }
+
+  const onLogout = () => {
+    firebase.auth()
+    .signOut()
+    .then(() => setUser({isAuthenticated: false}))
+    .catch(err => console.log(err))
+  }
 
   const setFlashMessage = (message) => {
     setMessage(message)
@@ -86,6 +88,7 @@ function App(props) {
 
   return (
     <Router>
+      <UserContext.Provider value={{ user, onLogin, onLogout }}>
       <div className="App">
       <Header />
       {message && <Message type={message} /> }
@@ -94,6 +97,12 @@ function App(props) {
           exact path="/"
           render={ () => <Posts posts={posts} deletePost={deletePost} /> }
         /> 
+        <Route 
+          exact path="/login" 
+          render={() => {
+          return !user.isAuthenticated ? <Login /> : <Redirect to="/" />
+        }}
+        />
         <Route 
           path="/posts/:postSlug"
           render={(props) => {
@@ -108,10 +117,11 @@ function App(props) {
         <Route 
           exact path="/new"
           render={() => {
-            return <PostForm 
+            return user.isAuthenticated ? <PostForm 
               addNewPost={addNewPost} 
               post={{id: 0, slug: "", title: "", content: ""}}
-            />
+            /> : 
+            <Redirect to="/login" />
           }}
         />
         <Route  
@@ -119,7 +129,11 @@ function App(props) {
           render={(props) => {
             const post = posts.find(post => post.slug === props.match.params.postSlug)
             if (post) {
-              return <PostForm post={post} updatePost={updatePost} />
+              if (user.isAuthenticated) {
+                return <PostForm post={post} updatePost={updatePost} />
+              } else {
+                return <Redirect to="/login" />
+              }
             } else {
               return <Redirect to="/" />
             }
@@ -130,6 +144,7 @@ function App(props) {
         />
       </Switch>
       </div>
+      </UserContext.Provider>
     </Router>
   );
 }

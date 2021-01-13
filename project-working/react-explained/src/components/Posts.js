@@ -1,7 +1,11 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { Link } from 'react-router-dom'
+import UserContext from '../context/UserContext'
 
 const Posts = ({ posts, deletePost }) => {
+
+    const {user} = useContext(UserContext)
+
     return ( 
         <article className="postsContainer">
             <h1>
@@ -22,7 +26,9 @@ const Posts = ({ posts, deletePost }) => {
                                         {post.title}
                                     </Link>
                                 </h2>
-                                <p>
+                                
+                              { user.isAuthenticated &&
+                                 <p>
                                     <Link to={`/edit/${post.slug}`}>
                                         Edit
                                     </Link>
@@ -36,6 +42,7 @@ const Posts = ({ posts, deletePost }) => {
                                         Delete
                                     </button>
                                 </p>
+                            }
             
                                 
                             </li>
